@@ -4,7 +4,9 @@ from urllib.parse import quote
 OUT = Path(__file__).parent
 # Bozza: finché restano segnaposto il sito non deve finire su Google. Mettere False al lancio.
 DRAFT = True
+
 TEL = "tel:+393923014253"
+TEL_LABEL = "392 301 4253"
 
 
 def wa(msg="Buongiorno, vorrei prenotare una visita podologica."):
@@ -14,95 +16,101 @@ def wa(msg="Buongiorno, vorrei prenotare una visita podologica."):
 WA = wa()
 NAV = [("index.html", "Home"), ("servizi.html", "Servizi"), ("chi-sono.html", "Chi sono"), ("contatti.html", "Contatti")]
 
-SERVICES = [
-    ("Visita podologica", "Valutazione completa del piede, della pelle e delle unghie, con indicazioni chiare sul percorso di cura."),
-    ("Unghia incarnita", "Trattamento conservativo dell'onicocriptosi e rieducazione ungueale con ortonixia, senza ricorrere subito alla chirurgia."),
-    ("Calli e duroni", "Rimozione indolore di ipercheratosi e tilomi e analisi delle cause che li fanno tornare."),
-    ("Verruche plantari", "Diagnosi e trattamento delle verruche del piede con protocolli mirati e controlli periodici."),
-    ("Piede diabetico", "Prevenzione, screening del rischio ulcerativo e cura periodica per chi convive con il diabete."),
-    ("Plantari su misura", "Ortesi plantari progettate sul tuo piede dopo la valutazione posturale e dell'appoggio."),
-    ("Esame baropodometrico", "Analisi computerizzata delle pressioni plantari, da fermo e durante il passo."),
-    ("Micosi delle unghie", "Inquadramento dell'onicomicosi, trattamento podologico e monitoraggio della ricrescita."),
-    ("Podologia sportiva", "Valutazione del gesto atletico, prevenzione dei sovraccarichi e gestione di vesciche e microtraumi."),
-    ("Podologia pediatrica", "Controllo dello sviluppo del piede e del cammino nei bambini, dal piede piatto all'unghia incarnita."),
+# title, one line for the home tile, full description for the services page
+TREATMENTS = [
+    ("Unghia incarnita", "Sollievo dal dolore e correzione dell'unghia, senza chirurgia quando possibile.",
+     "Trattamento conservativo dell'onicocriptosi e rieducazione dell'unghia con ortonixia, per risolvere il dolore ed evitare che si ripresenti."),
+    ("Calli e duroni", "Rimozione indolore e ricerca della causa, perché non tornino.",
+     "Rimozione indolore di ipercheratosi e tilomi e valutazione di appoggio e calzature, che spesso ne sono la causa."),
+    ("Verruche plantari", "Diagnosi e trattamento mirato, con controlli fino alla scomparsa.",
+     "Riconoscimento della lesione e trattamento podologico con protocolli mirati e controlli periodici."),
+    ("Piede diabetico", "Prevenzione e controlli regolari per chi convive con il diabete.",
+     "Screening del rischio ulcerativo, cura periodica di pelle e unghie ed educazione alla prevenzione, in collaborazione con il medico curante."),
+    ("Plantari su misura", "Ortesi progettate sul tuo piede e sul tuo modo di camminare.",
+     "Ortesi plantari realizzate dopo la valutazione dell'appoggio e della postura, per scaricare i punti dolenti e migliorare il cammino."),
+    ("Esame baropodometrico", "L'analisi computerizzata di come appoggi il piede, da fermo e in cammino.",
+     "Analisi computerizzata delle pressioni plantari in statica e in dinamica: mostra dove il piede lavora troppo e guida la scelta del trattamento."),
+    ("Visita podologica", "",
+     "Valutazione completa di pelle, unghie, appoggio e cammino, con indicazioni chiare sul percorso di cura."),
+    ("Micosi delle unghie", "",
+     "Inquadramento dell'onicomicosi, trattamento podologico dell'unghia e monitoraggio della ricrescita."),
 ]
 
-CATS = {
-    "Visita podologica": "prevenzione",
-    "Unghia incarnita": "unghie",
-    "Calli e duroni": "pelle",
-    "Verruche plantari": "pelle",
-    "Piede diabetico": "prevenzione pelle unghie",
-    "Plantari su misura": "appoggio",
-    "Esame baropodometrico": "appoggio",
-    "Micosi delle unghie": "unghie",
-    "Podologia sportiva": "appoggio prevenzione",
-    "Podologia pediatrica": "appoggio prevenzione",
-}
-
-# chip label, panel id, pressure-map zone, related services
-ZONES = [
-    ("Unghie", "unghie", "dita", ["Unghia incarnita", "Micosi delle unghie"]),
-    ("Dita", "dita", "dita", ["Calli e duroni", "Visita podologica"]),
-    ("Avampiede", "avampiede", "avampiede", ["Calli e duroni", "Verruche plantari", "Plantari su misura"]),
-    ("Arco plantare", "arco", "arco", ["Esame baropodometrico", "Plantari su misura"]),
-    ("Tallone", "tallone", "tallone", ["Plantari su misura", "Verruche plantari", "Podologia sportiva"]),
+# anchor, title, tile label, tile caption, short text, long text
+AUDIENCE = [
+    ("bambini", "Bambini e ragazzi", "0–17", "anni",
+     "Piede piatto, cammino in punta, unghie incarnite: si controlla come cresce il piede.",
+     "Si osserva come si sviluppano piede e cammino durante la crescita: piede piatto, punte in dentro, verruche e unghie incarnite sono i motivi di visita più frequenti."),
+    ("adulti", "Adulti", "18–64", "anni",
+     "Dolore, calli, unghie difficili: si cerca la causa e si sceglie il trattamento.",
+     "Dolore al tallone o all'avampiede, calli che tornano, unghie che fanno male: la visita serve a capire la causa e a impostare il trattamento giusto."),
+    ("anziani", "Over 65", "65+", "anni",
+     "Cure delicate per unghie ispessite, calli e dolore, quando chinarsi è difficile.",
+     "Trattamenti delicati e regolari per unghie ispessite, calli e pelle fragile, con attenzione a diabete, circolazione ed equilibrio."),
+    ("sportivi", "Sportivi", "Sport", "a ogni livello",
+     "Appoggio, sovraccarichi, vesciche: per correre e allenarsi senza fastidi.",
+     "Valutazione dell'appoggio e del gesto atletico, prevenzione dei sovraccarichi, gestione di vesciche, unghie nere e microtraumi."),
 ]
+
+DOTS = '<div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>'
+DOTS_LEFT = DOTS.replace('class="dots"', 'class="dots dots--left"')
+LOGO = ('<svg viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="15.5" cy="22" rx="5" ry="6" fill="#17224d"/>'
+        '<ellipse cx="14.5" cy="12" rx="6" ry="4.6" fill="#17224d"/><circle cx="8.5" cy="5" r="2" fill="#3d77f5"/>'
+        '<circle cx="13.5" cy="3.4" r="1.7" fill="#3d77f5"/><circle cx="18" cy="4" r="1.5" fill="#3d77f5"/>'
+        '<circle cx="21.8" cy="5.8" r="1.3" fill="#3d77f5"/><circle cx="24.6" cy="8.6" r="1.1" fill="#3d77f5"/></svg>')
+ROBOTS = '  <meta name="robots" content="noindex, nofollow">\n' if DRAFT else ""
+
+HOURS = """<table class="hours">
+              <tbody>
+                <tr><th scope="row">Lunedì</th><td>[ORARIO]</td></tr>
+                <tr><th scope="row">Martedì</th><td>[ORARIO]</td></tr>
+                <tr><th scope="row">Mercoledì</th><td>[ORARIO]</td></tr>
+                <tr><th scope="row">Giovedì</th><td>[ORARIO]</td></tr>
+                <tr><th scope="row">Venerdì</th><td>[ORARIO]</td></tr>
+                <tr><th scope="row">Sabato</th><td>[ORARIO]</td></tr>
+                <tr><th scope="row">Domenica</th><td>Chiuso</td></tr>
+              </tbody>
+            </table>"""
 
 
 def slug(s):
     return s.lower().replace(" ", "-")
 
 
-def foot(tag="Pressione plantare"):
-    return f"""<div class="foot dark">
-          <span class="foot__tag">{tag}</span>
-          <canvas data-foot aria-hidden="true"></canvas>
-          <span class="foot__legend">min<i></i>max</span>
-        </div>"""
-
-
-ROBOTS = '  <meta name="robots" content="noindex, nofollow">\n' if DRAFT else ""
-
-
 def page(file, title, desc, body):
     links = "\n".join(
-        f'          <li><a href="{h}"{" aria-current=\"page\"" if h == file else ""}>{t}</a></li>' for h, t in NAV
+        f'            <li><a href="{h}"{" aria-current=\"page\"" if h == file else ""}>{t}</a></li>' for h, t in NAV
     )
     return f"""<!doctype html>
 <html lang="it">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{title}</title>
   <meta name="description" content="{desc}">
-{ROBOTS}  <meta name="theme-color" content="#0c5f75">
-  <link rel="preload" href="fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+{ROBOTS}  <meta name="theme-color" content="#17224d">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="it_IT">
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{desc}">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
   <a class="skip" href="#contenuto">Vai al contenuto</a>
-  <div class="progress" aria-hidden="true"></div>
 
   <header class="header">
-    <div class="wrap">
-      <div class="header__in">
-        <a class="logo" href="index.html">Kevin Qosja<span>.</span></a>
-        <button class="burger" aria-label="Apri il menu" aria-expanded="false" aria-controls="nav"><span></span></button>
-        <nav class="nav" id="nav" aria-label="Principale">
-          <ul>
+    <div class="wrap header__in">
+      <a class="logo" href="index.html">{LOGO}Kevin Qosja</a>
+      <button class="burger" aria-label="Apri il menu" aria-expanded="false" aria-controls="nav"><span></span></button>
+      <nav class="nav" id="nav" aria-label="Principale">
+        <ul>
 {links}
-          </ul>
-          <a class="btn btn--sm" href="{WA}">Prenota</a>
-        </nav>
-      </div>
+        </ul>
+        <a class="btn btn--sm" href="{WA}">Prenota</a>
+      </nav>
     </div>
   </header>
 
@@ -110,38 +118,19 @@ def page(file, title, desc, body):
 {body}
   </main>
 
-  <footer class="footer dark">
+  <footer class="footer">
     <div class="wrap">
-      <div class="footer__grid">
-        <div>
-          <p class="logo">Kevin Qosja<span>.</span></p>
-          <p>Studio di podologia a Lucca.<br>Si riceve su appuntamento.</p>
-        </div>
-        <div>
-          <h3>Studio</h3>
-          <ul>
-            <li>[INDIRIZZO]</li>
-            <li>[CAP] Lucca (LU)</li>
-            <li><a href="{TEL}">392 301 4253</a></li>
-            <li><a href="mailto:[EMAIL]">[EMAIL]</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3>Sito</h3>
-          <ul>
-            <li><a href="servizi.html">Servizi</a></li>
-            <li><a href="chi-sono.html">Chi sono</a></li>
-            <li><a href="contatti.html">Contatti</a></li>
-            <li><a href="privacy.html">Privacy</a></li>
-          </ul>
-        </div>
+      <div class="footer__in">
+        <span>© <span data-year>2026</span> Dott. Kevin Qosja · Podologo a Lucca</span>
+        <ul>
+          <li><a href="{TEL}">{TEL_LABEL}</a></li>
+          <li><a href="mailto:[EMAIL]">[EMAIL]</a></li>
+          <li>P.IVA [P.IVA]</li>
+          <li><a href="privacy.html">Privacy</a></li>
+        </ul>
       </div>
-      <div class="footer__legal">
-        <span>© <span data-year>2026</span> Dott. Kevin Qosja · P.IVA [P.IVA] · Iscritto all'Albo dei Podologi di [PROVINCIA ALBO] n. [N. ALBO]</span>
-        <span>Le informazioni di questo sito hanno scopo informativo e non sostituiscono la visita.</span>
-      </div>
+      <p class="footer__legal">Iscritto all'Albo dei Podologi di [PROVINCIA ALBO] n. [N. ALBO]. Le informazioni di questo sito hanno scopo informativo e non sostituiscono la visita.</p>
     </div>
-    <p class="footer__big" aria-hidden="true">podologo.</p>
   </footer>
 
   <div class="dock">
@@ -155,288 +144,163 @@ def page(file, title, desc, body):
 """
 
 
-def cta(title="Hai un dolore che non passa? Parliamone."):
-    return f"""    <section class="wrap">
-      <div class="cta" data-reveal>
-        <h2>{title}</h2>
-        <div class="btn-row">
-          <a class="btn" href="{WA}">Scrivi su WhatsApp</a>
-          <a class="btn btn--ghost" href="{TEL}">Chiama lo studio</a>
+def page_hero(title, lead):
+    return f"""    <section class="hero hero--page">
+      {DOTS}
+      <div class="wrap">
+        <h1>{title}</h1>
+        <p class="lead">{lead}</p>
+      </div>
+    </section>"""
+
+
+def book(title="Prenota una visita"):
+    return f"""    <section class="book">
+      {DOTS_LEFT}
+      <div class="wrap">
+        <div data-reveal>
+          <h2>{title}</h2>
+          <p>Scrivimi su WhatsApp o chiama: fissiamo insieme giorno e ora.</p>
+          <a class="book__tel" href="{TEL}">{TEL_LABEL}</a>
+          <div class="btn-row">
+            <a class="btn" href="{WA}">Scrivi su WhatsApp</a>
+            <a class="btn btn--light" href="{TEL}">Chiama ora</a>
+          </div>
+        </div>
+        <div class="book__card" data-reveal>
+          <h3>Orari dello studio</h3>
+          {HOURS}
+          <p class="note" style="margin:1rem 0 0">[INDIRIZZO], [CAP] Lucca (LU) · si riceve su appuntamento</p>
         </div>
       </div>
     </section>"""
 
 
-def cards(items, linked=False):
+def who_cards(long=False):
     out = []
-    for i, (t, d) in enumerate(items):
-        inner = f"""<span class="card__n">{i + 1:02d}</span>
-            <h3>{t}</h3>
-            <p>{d}</p>"""
-        if linked:
-            out.append(f"""          <a class="card" href="servizi.html#{slug(t)}" data-reveal style="--i:{i % 3}">
-            {inner}
-          </a>""")
-        else:
-            cat = f' data-cat="{CATS[t]}"' if t in CATS else ""
-            out.append(f"""          <li class="card" id="{slug(t)}"{cat} data-reveal style="--i:{i % 3}">
-            {inner}
-          </li>""")
+    for anchor, title, big, small, short, full in AUDIENCE:
+        tail = "" if long else f'\n            <a class="btn btn--sm" href="servizi.html#{anchor}">Scopri di più</a>'
+        ident = f' id="{anchor}"' if long else ""
+        out.append(f"""          <article class="who"{ident} data-reveal>
+            <div class="who__tile">{DOTS}<span>{big}<small>{small}</small></span></div>
+            <h3>{title}</h3>
+            <p>{full if long else short}</p>{tail}
+          </article>""")
     return "\n".join(out)
 
 
-def page_hero(eyebrow, title, lead, extra=""):
-    return f"""    <section class="hero hero--page">
-      <div class="wrap">
-        <p class="eyebrow">{eyebrow}</p>
-        <h1><span class="line"><span>{title}</span></span></h1>
-        <p class="lead" data-reveal>{lead}</p>{extra}
-      </div>
-    </section>"""
-
-
-HOURS = """        <table class="hours" data-reveal style="--i:1">
-          <tbody>
-            <tr><th scope="row">Lunedì</th><td>[ORARIO]</td></tr>
-            <tr><th scope="row">Martedì</th><td>[ORARIO]</td></tr>
-            <tr><th scope="row">Mercoledì</th><td>[ORARIO]</td></tr>
-            <tr><th scope="row">Giovedì</th><td>[ORARIO]</td></tr>
-            <tr><th scope="row">Venerdì</th><td>[ORARIO]</td></tr>
-            <tr><th scope="row">Sabato</th><td>[ORARIO]</td></tr>
-            <tr><th scope="row">Domenica</th><td>Chiuso</td></tr>
-          </tbody>
-        </table>"""
-
-SIGNS = """    <section class="section band">
-      <div class="wrap">
-        <div class="head" data-reveal>
-          <h2>Quando conviene <em>farsi vedere</em></h2>
-          <p class="lead" style="max-width:26em;margin:0">Segnali comuni che vale la pena far valutare, senza aspettare che peggiorino.</p>
-        </div>
-        <ul class="checks" data-reveal style="--i:1">
-          <li>Dolore al tallone o sotto la pianta quando cammini</li>
-          <li>Un'unghia che si incarna, si ispessisce o cambia colore</li>
-          <li>Calli e duroni che tornano sempre nello stesso punto</li>
-          <li>Una lesione sulla pianta che non passa da settimane</li>
-          <li>Diabete: il controllo periodico del piede è parte della cura</li>
-          <li>Scarpe che si consumano in modo irregolare</li>
-          <li>Fastidi che compaiono correndo o dopo lo sport</li>
-          <li>Dubbi su come cammina o appoggia il piede tuo figlio</li>
-        </ul>
-      </div>
-    </section>
-
-"""
-
-AUDIENCE = f"""    <section class="section">
-      <div class="wrap">
-        <div class="head" data-reveal>
-          <h2>Per chi è <em>lo studio</em></h2>
-          <a class="btn btn--ghost" href="chi-sono.html">Come lavoro</a>
-        </div>
-        <ul class="grid rail">
-{cards([
-    ("Chi fa sport", "Corsa, calcio, padel, trekking: valutazione dell'appoggio e gestione dei sovraccarichi."),
-    ("Chi ha il diabete", "Controlli programmati, prevenzione delle lesioni e cura regolare di pelle e unghie."),
-    ("Over 65", "Trattamenti delicati per unghie difficili, calli e dolore, anche quando chinarsi è complicato."),
-    ("Bambini e ragazzi", "Piede piatto, cammino in punta, unghie incarnite: prima si guarda, meglio è."),
-])}
-        </ul>
-      </div>
-    </section>
-
-"""
-
-STUDIO = """    <section class="section band">
-      <div class="wrap">
-        <div class="head" data-reveal>
-          <h2>Lo <em>studio</em></h2>
-          <p class="lead" style="max-width:26em;margin:0">[DESCRIZIONE STUDIO — una frase su ambiente, attrezzatura e come ci si arriva.]</p>
-        </div>
-        <div class="gallery" data-reveal style="--i:1">
-          <div class="portrait"><span>Foto 1 · sala trattamenti</span></div>
-          <div class="portrait"><span>Foto 2 · ingresso</span></div>
-          <div class="portrait"><span>Foto 3 · strumenti</span></div>
-          <div class="portrait"><span>Foto 4 · pedana baropodometrica</span></div>
-        </div>
-        <ul class="pills" data-reveal style="--i:2">
-          <li>Autoclave e materiale monouso</li>
-          <li>Pagamenti tracciabili</li>
-          <li>[PARCHEGGIO]</li>
-          <li>[ACCESSO SENZA BARRIERE]</li>
-        </ul>
-      </div>
-    </section>
-
-"""
-
-WHERE = f"""    <section class="section">
-      <div class="wrap split">
-        <div data-reveal>
-          <p class="eyebrow">Dove e quando</p>
-          <h2>Vieni a <em>trovarmi</em></h2>
-          <p class="lead">[INDIRIZZO]<br>[CAP] Lucca (LU)</p>
-          <div class="btn-row">
-            <a class="btn" href="{WA}">Prenota su WhatsApp</a>
-            <a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&amp;query=[INDIRIZZO+PER+MAPS]" target="_blank" rel="noopener">Apri in Google Maps</a>
-          </div>
-        </div>
-{HOURS}
-      </div>
-    </section>
-
-"""
-
-FIRST = """    <section class="section band" style="margin-top:clamp(3.5rem,7vw,6rem)">
-      <div class="wrap">
-        <div class="head" data-reveal><h2>Come si svolge <em>la prima visita</em></h2></div>
-        <ol class="steps">
-          <li data-reveal><h3>Ascolto</h3><p>Mi racconti il disturbo, da quanto dura, che scarpe usi, se hai altre patologie o terapie.</p></li>
-          <li data-reveal style="--i:1"><h3>Esame del piede</h3><p>Osservo pelle, unghie, appoggio e cammino. Se serve, aggiungiamo l'esame baropodometrico.</p></li>
-          <li data-reveal style="--i:2"><h3>Piano di cura</h3><p>Ti spiego cosa ho visto, cosa propongo, tempi e costi. Decidi tu se e quando iniziare.</p></li>
-          <li data-reveal style="--i:3"><h3>A casa</h3><p>Esci con indicazioni pratiche su igiene, calzature e prodotti da usare tra una seduta e l'altra.</p></li>
-        </ol>
-      </div>
-    </section>
-
-"""
-
-marquee_items = "".join(f"<span>{t}</span>" for t, _ in SERVICES)
-
-chips = "\n".join(
-    f'            <button class="chip" type="button" aria-pressed="false" data-zone="{pid}" data-blob="{blob}">{label}</button>'
-    for label, pid, blob, _ in ZONES
+tiles = "\n".join(
+    f"""        <a class="tile" href="servizi.html#{slug(t)}" data-reveal>
+          <h3>{t}</h3>
+          <p>{short}</p>
+          <span class="btn btn--sm">Scopri</span>
+        </a>"""
+    for t, short, _ in TREATMENTS if short
 )
-panels = "\n".join(
-    f"""            <div data-panel="{pid}" hidden>
-              <h3>{label} — può esserti utile</h3>
-              <ul>
-{chr(10).join(f'                <li><a href="servizi.html#{slug(s)}">{s}</a></li>' for s in svc)}
-              </ul>
-              <div class="btn-row"><a class="btn btn--sm" href="{wa(f'Buongiorno, ho un fastidio in questa zona del piede: {label.lower()}. Vorrei prenotare una visita podologica.')}">Scrivimi di questo</a></div>
-            </div>"""
-    for label, pid, _, svc in ZONES
+
+rows = "\n".join(
+    f"""        <li class="row" id="{slug(t)}" data-reveal>
+          <h3>{t}</h3>
+          <p>{full}</p>
+        </li>"""
+    for t, _, full in TREATMENTS
 )
 
 index = f"""    <section class="hero">
-      <div class="wrap hero__grid">
-        <div>
-          <p class="eyebrow">Podologo a Lucca</p>
-          <h1>
-            <span class="line"><span>Piedi sani,</span></span>
-            <span class="line" style="--i:1"><span>passo</span></span>
-            <span class="line" style="--i:2"><span class="accent">deciso.</span></span>
-          </h1>
-          <p class="lead" data-reveal style="--i:4">Sono Kevin Qosja, podologo. Mi occupo di prevenzione, cura e riabilitazione del piede: dall'unghia incarnita ai plantari su misura.</p>
-          <div class="btn-row" data-reveal style="--i:5">
-            <a class="btn" href="{WA}">Prenota su WhatsApp</a>
-            <a class="btn btn--ghost" href="{TEL}">Chiama 392 301 4253</a>
-          </div>
-        </div>
-        {foot("Appoggio · simulazione")}
-      </div>
-    </section>
-
-    <section class="wrap" aria-label="In breve">
-      <ul class="facts">
-        <li data-reveal><strong>Solo su appuntamento</strong><span>Nessuna attesa in sala, tempo dedicato a te.</span></li>
-        <li data-reveal style="--i:1"><strong>Strumenti sterilizzati</strong><span>Sterilizzazione in autoclave a ogni seduta.</span></li>
-        <li data-reveal style="--i:2"><strong>Prestazione sanitaria</strong><span>Fattura detraibile nella dichiarazione dei redditi.</span></li>
-      </ul>
-    </section>
-
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee__track">{marquee_items}{marquee_items}</div>
-    </div>
-
-    <section class="section">
+      {DOTS}
       <div class="wrap">
-        <div class="head" data-reveal>
-          <h2>Di cosa <em>mi occupo</em></h2>
-          <a class="btn btn--ghost" href="servizi.html">Tutti i servizi</a>
-        </div>
-        <div class="bento">
-{cards(SERVICES[:4], linked=True)}
-          <a class="card card--accent" href="servizi.html" data-reveal style="--i:2">
-            <span class="card__n">+{len(SERVICES) - 4}</span>
-            <h3>Vedi tutti i trattamenti ↗</h3>
-          </a>
+        <h1>Podologo a Lucca</h1>
+        <p class="lead">Sono Kevin Qosja. Nel mio studio mi prendo cura dei tuoi piedi con attenzione e metodo: prevenzione, trattamento e riabilitazione, a ogni età.</p>
+        <div class="btn-row">
+          <a class="btn" href="{WA}">Prenota su WhatsApp</a>
+          <a class="btn btn--ghost" href="{TEL}">Chiama {TEL_LABEL}</a>
         </div>
       </div>
     </section>
 
-{SIGNS}{AUDIENCE}    <section class="section dark" data-finder>
-      <div class="wrap finder">
+    <section class="split">
+      <div class="panel panel--mist">
+        <div class="foot" data-reveal>
+          <span class="foot__tag">Appoggio del piede · simulazione</span>
+          <canvas data-foot aria-hidden="true"></canvas>
+        </div>
+      </div>
+      <div class="panel panel--navy">
+        {DOTS_LEFT}
         <div data-reveal>
-          {foot("Tocca una zona")}
-        </div>
-        <div data-reveal style="--i:1">
-          <p class="eyebrow">Orientati</p>
-          <h2>Dove senti <em>fastidio?</em></h2>
-          <p class="lead">Tocca l'impronta o scegli la zona: ti indico i trattamenti che più spesso c'entrano.</p>
-          <div class="chips" role="group" aria-label="Zona del piede">
-{chips}
-          </div>
-          <div class="finder__out" aria-live="polite">
-            <div data-panel="intro">
-              <h3>Come funziona</h3>
-              <p class="muted">Tocca una zona qui sopra per vedere i servizi collegati e scrivermi con il messaggio già pronto.</p>
-            </div>
-{panels}
-          </div>
-          <p class="note" style="margin-top:1rem">Indicazione orientativa: non è una diagnosi, la valutazione si fa in visita.</p>
+          <h2>La cura del piede, per tutta la famiglia</h2>
+          <p>Il podologo è il professionista sanitario laureato che previene e tratta i disturbi del piede. Non si occupa solo di unghie e calli: dal modo in cui appoggi il piede dipendono il cammino, la postura e spesso anche ginocchia e schiena.</p>
+          <p>In studio seguo bambini, adulti, anziani e sportivi, con un percorso costruito sulla persona e spiegato passo per passo.</p>
+          <div class="btn-row"><a class="btn btn--light" href="chi-sono.html">Chi sono</a></div>
         </div>
       </div>
     </section>
 
     <section class="section">
+      <div class="wrap audience">
+        <div class="audience__title">
+          {DOTS_LEFT}
+          <h2>A chi mi rivolgo</h2>
+        </div>
+        <div class="audience__cards">
+{who_cards()}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
       <div class="wrap">
-        <div class="head" data-reveal><h2>Come <em>funziona</em></h2></div>
+        <div class="center" data-reveal>
+          <h2>Terapie e trattamenti</h2>
+          <p class="lead">I motivi più frequenti per cui si viene in studio. Ogni percorso parte da una visita, per capire la causa prima di trattare.</p>
+        </div>
+        <div class="tiles">
+{tiles}
+        </div>
+        <div class="center"><div class="btn-row"><a class="btn btn--ghost" href="servizi.html">Tutti i servizi</a></div></div>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--mist)">
+      <div class="wrap center">
+        <h2 data-reveal>Come funziona</h2>
         <ol class="steps">
-          <li data-reveal><h3>Mi scrivi o mi chiami</h3><p>Mi racconti il problema e fissiamo insieme giorno e ora della visita.</p></li>
-          <li data-reveal style="--i:1"><h3>Prima visita</h3><p>Valuto il piede, ti spiego cosa succede e quali sono le opzioni di trattamento.</p></li>
-          <li data-reveal style="--i:2"><h3>Trattamento e controlli</h3><p>Iniziamo il percorso e programmiamo i controlli solo quando servono davvero.</p></li>
+          <li data-reveal><h3>Mi scrivi o mi chiami</h3><p>Mi racconti il problema e fissiamo giorno e ora della visita.</p></li>
+          <li data-reveal><h3>Prima visita</h3><p>Valuto il piede e ti spiego cosa succede e quali sono le opzioni.</p></li>
+          <li data-reveal><h3>Trattamento e controlli</h3><p>Iniziamo il percorso; i controlli si programmano solo quando servono.</p></li>
         </ol>
       </div>
     </section>
 
-{STUDIO}    <section class="section">
-      <div class="wrap split">
+{book()}"""
+
+servizi = f"""{page_hero("Servizi e trattamenti", "Ogni percorso parte da una visita: prima si capisce la causa, poi si sceglie il trattamento più adatto.")}
+
+    <section class="section">
+      <div class="wrap">
+        <div class="center" data-reveal><h2>Trattamenti</h2></div>
+        <ul class="rows">
+{rows}
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" style="background:var(--mist)">
+      <div class="wrap">
+        <div class="center" data-reveal style="margin-bottom:3rem"><h2>A chi mi rivolgo</h2></div>
+        <div class="audience__cards" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+{who_cards(long=True)}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap two">
         <div data-reveal>
-          <p class="eyebrow">Chi sono</p>
-          <h2>Un professionista sanitario, <em>non un estetista.</em></h2>
+          <h2>Domande frequenti</h2>
+          <p class="lead">Quello che di solito ci si chiede prima di venire in studio.</p>
         </div>
-        <div data-reveal style="--i:1">
-          <p class="lead">Il podologo è il professionista sanitario laureato che tratta le patologie del piede. In studio trovi ascolto, spiegazioni chiare e un percorso costruito sul tuo caso.</p>
-          <div class="btn-row"><a class="btn btn--ghost" href="chi-sono.html">Scopri di più</a></div>
-        </div>
-      </div>
-    </section>
-
-{WHERE}{cta()}"""
-
-servizi = f"""{page_hero("Servizi", "Trattamenti podologici", "Ogni percorso parte da una visita: prima capiamo la causa, poi scegliamo il trattamento più adatto.")}
-
-    <section class="wrap">
-      <div class="chips" data-filter role="group" aria-label="Filtra i trattamenti" style="margin-top:0">
-        <button class="chip" type="button" aria-pressed="true" data-show="tutti">Tutti</button>
-        <button class="chip" type="button" aria-pressed="false" data-show="unghie">Unghie</button>
-        <button class="chip" type="button" aria-pressed="false" data-show="pelle">Pelle</button>
-        <button class="chip" type="button" aria-pressed="false" data-show="appoggio">Appoggio e postura</button>
-        <button class="chip" type="button" aria-pressed="false" data-show="prevenzione">Prevenzione</button>
-      </div>
-      <ul class="grid">
-{cards(SERVICES)}
-      </ul>
-    </section>
-
-{FIRST}    <section class="section">
-      <div class="wrap split">
-        <div class="sticky" data-reveal>
-          <p class="eyebrow">Domande frequenti</p>
-          <h2>Prima di <em>venire in studio</em></h2>
-        </div>
-        <div class="faq" data-reveal style="--i:1">
+        <div class="faq" data-reveal>
           <details name="faq">
             <summary>Serve l'impegnativa del medico?</summary>
             <p>No. Puoi prenotare direttamente una visita podologica senza prescrizione.</p>
@@ -461,91 +325,89 @@ servizi = f"""{page_hero("Servizi", "Trattamenti podologici", "Ogni percorso par
       </div>
     </section>
 
-{cta("Non sai quale trattamento ti serve? Scrivimi.")}"""
+{book("Non sai quale trattamento ti serve?")}"""
 
-chi = f"""{page_hero("Chi sono", "Dott. Kevin Qosja", "Podologo, laureato in Podologia presso [UNIVERSITÀ]. Iscritto all'Albo dei Podologi di [PROVINCIA ALBO] n. [N. ALBO].")}
+chi = f"""{page_hero("Dott. Kevin Qosja", "Podologo a Lucca. Laureato in Podologia presso [UNIVERSITÀ], iscritto all'Albo dei Podologi di [PROVINCIA ALBO] n. [N. ALBO].")}
 
-    <section class="wrap split">
-      <div class="portrait sticky" data-reveal><span>Foto di Kevin · verticale 4:5</span></div>
-      <div data-reveal style="--i:1">
-        <h2>Il mio <em>approccio</em></h2>
-        <p class="muted">[BIO — due o tre frasi su Kevin: da quanto esercita, dove ha lavorato, di cosa si occupa in particolare.]</p>
-        <p class="muted">Credo in una podologia che spiega. Ogni visita parte dall'ascolto e finisce con indicazioni che puoi seguire a casa, perché la cura del piede continua anche fuori dallo studio.</p>
-        <ul class="list">
-          <li>Laurea in Podologia — [UNIVERSITÀ], [ANNO]</li>
-          <li>[CORSO / MASTER / SPECIALIZZAZIONE]</li>
-          <li>Aggiornamento continuo ECM</li>
-        </ul>
+    <section class="split">
+      <div class="panel panel--navy">
+        {DOTS_LEFT}
+        <div data-reveal>
+          <h2>Il mio approccio</h2>
+          <p>[BIO — due o tre frasi su Kevin: da quanto esercita, dove ha lavorato, di cosa si occupa in particolare.]</p>
+          <p>Credo in una podologia che spiega. Ogni visita parte dall'ascolto e finisce con indicazioni che puoi seguire a casa, perché la cura del piede continua anche fuori dallo studio.</p>
+        </div>
+      </div>
+      <div class="panel panel--mist" style="align-items:stretch">
+        <div data-reveal>
+          <h3>Formazione</h3>
+          <ul class="list">
+            <li>Laurea in Podologia — [UNIVERSITÀ], [ANNO]</li>
+            <li>[CORSO / MASTER / SPECIALIZZAZIONE]</li>
+            <li>Aggiornamento continuo ECM</li>
+          </ul>
+        </div>
       </div>
     </section>
+
+    <section class="section">
+      <div class="wrap center">
+        <h2 data-reveal>Cosa trovi in studio</h2>
+        <ol class="steps steps--plain">
+          <li data-reveal><h3>Tempo</h3><p>Appuntamenti senza fretta: il tempo della seduta è tutto per te.</p></li>
+          <li data-reveal><h3>Chiarezza</h3><p>Ti spiego cosa vedo, cosa propongo e quanto costa prima di iniziare.</p></li>
+          <li data-reveal><h3>Igiene</h3><p>Strumenti sterilizzati in autoclave e materiale monouso.</p></li>
+          <li data-reveal><h3>Collaborazione</h3><p>Quando serve lavoro con il tuo medico, l'ortopedico o il diabetologo.</p></li>
+        </ol>
+      </div>
+    </section>
+
+{book("Vuoi fissare una prima visita?")}"""
+
+contatti = f"""{page_hero("Contatti", "Il modo più veloce per prenotare è WhatsApp: scrivimi quando vuoi, ti rispondo appena esco dalla seduta.")}
 
     <section class="section">
       <div class="wrap">
-        <div class="head" data-reveal><h2>Cosa trovi <em>in studio</em></h2></div>
-        <ul class="grid rail">
-{cards([
-    ("Tempo", "Appuntamenti senza fretta: il tempo della seduta è tutto per te."),
-    ("Chiarezza", "Ti spiego cosa vedo, cosa propongo e quanto costa prima di iniziare."),
-    ("Igiene", "Strumentario sterilizzato in autoclave e materiale monouso."),
-    ("Collaborazione", "Quando serve lavoro insieme al tuo medico, all'ortopedico o al diabetologo."),
-])}
-        </ul>
+        <div class="info">
+          <div data-reveal>
+            <h3>Dove</h3>
+            <p>[INDIRIZZO]<br>[CAP] Lucca (LU)</p>
+            <div class="btn-row"><a class="btn btn--sm" href="https://www.google.com/maps/search/?api=1&amp;query=[INDIRIZZO+PER+MAPS]" target="_blank" rel="noopener">Apri in Google Maps</a></div>
+          </div>
+          <div data-reveal>
+            <h3>Telefono e WhatsApp</h3>
+            <p><a href="{TEL}">{TEL_LABEL}</a></p>
+            <div class="btn-row"><a class="btn btn--sm" href="{WA}">Scrivi su WhatsApp</a></div>
+          </div>
+          <div data-reveal>
+            <h3>Email</h3>
+            <p><a href="mailto:[EMAIL]">[EMAIL]</a></p>
+          </div>
+        </div>
+        <p class="muted" style="margin-top:2rem" data-reveal>[COME ARRIVARE — parcheggio, mezzi pubblici, piano, accesso senza barriere.]</p>
       </div>
     </section>
 
-{cta("Vuoi fissare una prima visita?")}"""
+{book()}"""
 
-contatti = f"""{page_hero("Contatti", "Prenota la tua visita", "Il modo più veloce è WhatsApp: scrivimi quando vuoi, ti rispondo appena esco dalla seduta.", f'''
-        <div class="btn-row" data-reveal style="--i:1">
-          <a class="btn" href="{WA}">Scrivi su WhatsApp</a>
-          <a class="btn btn--ghost" href="{TEL}">Chiama 392 301 4253</a>
-        </div>''')}
-
-    <section class="wrap">
-      <div class="info">
-        <div class="card" data-reveal>
-          <h3>Dove</h3>
-          <p>[INDIRIZZO]<br>[CAP] Lucca (LU)</p>
-          <div class="btn-row"><a class="btn btn--ghost btn--sm" href="https://www.google.com/maps/search/?api=1&amp;query=[INDIRIZZO+PER+MAPS]" target="_blank" rel="noopener">Apri in Google Maps</a></div>
-        </div>
-        <div class="card" data-reveal style="--i:1">
-          <h3>Telefono</h3>
-          <p><a href="{TEL}">392 301 4253</a></p>
-        </div>
-        <div class="card" data-reveal style="--i:2">
-          <h3>Email</h3>
-          <p><a href="mailto:[EMAIL]">[EMAIL]</a></p>
-        </div>
-      </div>
-    </section>
+privacy = f"""{page_hero("Informativa privacy", "[BOZZA DA FAR VERIFICARE — questo testo è un punto di partenza e non sostituisce la consulenza di un professionista.]")}
 
     <section class="section">
-      <div class="wrap split">
-        <div class="sticky" data-reveal>
-          <p class="eyebrow">Orari</p>
-          <h2>Si riceve <em>su appuntamento</em></h2>
-          <p class="muted">[COME ARRIVARE — parcheggio, mezzi pubblici, piano, accesso senza barriere.]</p>
-        </div>
-{HOURS}
+      <div class="wrap prose">
+        <h2>Titolare del trattamento</h2>
+        <p>Dott. Kevin Qosja, [INDIRIZZO], [CAP] Lucca (LU) — P.IVA [P.IVA] — [EMAIL].</p>
+        <h2>Dati raccolti dal sito</h2>
+        <p>Questo sito non usa cookie di profilazione, strumenti di tracciamento né moduli di contatto. Non raccoglie dati personali dei visitatori.</p>
+        <h2>Contatti via telefono, WhatsApp ed email</h2>
+        <p>Se ci contatti, i dati che comunichi (nome, numero, contenuto del messaggio) sono usati solo per rispondere e gestire l'appuntamento. WhatsApp è un servizio di terze parti, soggetto alla propria informativa.</p>
+        <h2>I tuoi diritti</h2>
+        <p>Puoi chiedere in ogni momento accesso, rettifica o cancellazione dei tuoi dati scrivendo a [EMAIL], e proporre reclamo al Garante per la protezione dei dati personali.</p>
       </div>
-    </section>"""
-
-privacy = f"""{page_hero("Privacy", "Informativa privacy", "[BOZZA DA FAR VERIFICARE — questo testo è un punto di partenza e non sostituisce la consulenza di un professionista.]")}
-
-    <section class="wrap prose">
-      <h2>Titolare del trattamento</h2>
-      <p>Dott. Kevin Qosja, [INDIRIZZO], [CAP] Lucca (LU) — P.IVA [P.IVA] — [EMAIL].</p>
-      <h2>Dati raccolti dal sito</h2>
-      <p>Questo sito non usa cookie di profilazione, strumenti di tracciamento né moduli di contatto. Non raccoglie dati personali dei visitatori.</p>
-      <h2>Contatti via telefono, WhatsApp ed email</h2>
-      <p>Se ci contatti, i dati che comunichi (nome, numero, contenuto del messaggio) sono usati solo per rispondere e gestire l'appuntamento. WhatsApp è un servizio di terze parti, soggetto alla propria informativa.</p>
-      <h2>I tuoi diritti</h2>
-      <p>Puoi chiedere in ogni momento accesso, rettifica o cancellazione dei tuoi dati scrivendo a [EMAIL], e proporre reclamo al Garante per la protezione dei dati personali.</p>
     </section>"""
 
 PAGES = {
-    "index.html": ("Kevin Qosja — Podologo a Lucca", "Studio di podologia a Lucca: unghia incarnita, calli, verruche, piede diabetico, plantari su misura. Prenota su WhatsApp o per telefono.", index),
-    "servizi.html": ("Servizi — Kevin Qosja, Podologo a Lucca", "Trattamenti podologici a Lucca: visita, unghia incarnita, calli, verruche, piede diabetico, plantari, esame baropodometrico.", servizi),
+    "index.html": ("Kevin Qosja — Podologo a Lucca", "Studio di podologia a Lucca: unghia incarnita, calli, verruche, piede diabetico, plantari su misura. Per bambini, adulti, anziani e sportivi.", index),
+    "servizi.html": ("Servizi — Kevin Qosja, Podologo a Lucca", "Trattamenti podologici a Lucca: unghia incarnita, calli, verruche, piede diabetico, plantari su misura, esame baropodometrico.", servizi),
     "chi-sono.html": ("Chi sono — Kevin Qosja, Podologo a Lucca", "Dott. Kevin Qosja, podologo a Lucca: formazione, approccio e metodo di lavoro.", chi),
     "contatti.html": ("Contatti e orari — Kevin Qosja, Podologo a Lucca", "Indirizzo, orari e contatti dello studio di podologia di Kevin Qosja a Lucca. Prenota su WhatsApp o per telefono.", contatti),
     "privacy.html": ("Privacy — Kevin Qosja, Podologo", "Informativa privacy del sito.", privacy),
