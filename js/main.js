@@ -21,11 +21,13 @@ if (burger && nav) {
 
 /* Header gets out of the way while reading, comes back on scroll up */
 const header = document.querySelector('.header');
+const dock = document.querySelector('.dock');
 let lastY = scrollY;
 addEventListener('scroll', () => {
   const y = scrollY;
   const menuOpen = nav && nav.classList.contains('is-open');
   header.classList.toggle('is-hidden', y > lastY && y > 400 && !menuOpen);
+  if (dock) dock.classList.toggle('is-visible', y > 380);
   lastY = y;
 }, { passive: true });
 
@@ -40,7 +42,7 @@ const revealer = new IntersectionObserver((entries) => {
       revealer.unobserve(e.target);
     }
   }
-}, { rootMargin: '0px 0px -8% 0px' });
+}, { rootMargin: '0px 0px 12% 0px' });
 document.querySelectorAll('[data-reveal]').forEach((el) => revealer.observe(el));
 
 /* Pointer spotlight on cards */
@@ -91,7 +93,8 @@ for (let i = 0; i < 256; i++) {
 }
 
 function pressureMap(canvas) {
-  const W = 180;
+  const small = matchMedia('(max-width: 700px)').matches;
+  const W = small ? 110 : 180;
   const H = W * ASPECT;
   const buf = document.createElement('canvas');
   buf.width = W;
@@ -159,7 +162,7 @@ function pressureMap(canvas) {
   const loop = (ms) => {
     if (!visible) return;
     requestAnimationFrame(loop);
-    if (ms - last < 33) return;
+    if (ms - last < (small ? 50 : 33)) return;
     last = ms;
     draw(ms);
   };

@@ -234,7 +234,7 @@ AUDIENCE = f"""    <section class="section">
           <h2>Per chi è <em>lo studio</em></h2>
           <a class="btn btn--ghost" href="chi-sono.html">Come lavoro</a>
         </div>
-        <ul class="grid">
+        <ul class="grid rail">
 {cards([
     ("Chi fa sport", "Corsa, calcio, padel, trekking: valutazione dell'appoggio e gestione dei sovraccarichi."),
     ("Chi ha il diabete", "Controlli programmati, prevenzione delle lesioni e cura regolare di pelle e unghie."),
@@ -482,7 +482,7 @@ chi = f"""{page_hero("Chi sono", "Dott. Kevin Qosja", "Podologo, laureato in Pod
     <section class="section">
       <div class="wrap">
         <div class="head" data-reveal><h2>Cosa trovi <em>in studio</em></h2></div>
-        <ul class="grid">
+        <ul class="grid rail">
 {cards([
     ("Tempo", "Appuntamenti senza fretta: il tempo della seduta è tutto per te."),
     ("Chiarezza", "Ti spiego cosa vedo, cosa propongo e quanto costa prima di iniziare."),
